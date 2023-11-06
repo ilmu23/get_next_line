@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 18:20:05 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/11/06 19:29:16 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/11/06 22:27:19 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,6 @@ size_t	ft_strlen(char *s);
 size_t	checknewline(char *buf, char **out);
 void	*ft_calloc(size_t count, size_t size);
 char	*ft_strnjoin(char *s1, char *s2, size_t n);
-char	*ft_strdup(char *s);
+char	*bufreset(char *buf, size_t start);
 
 #endif

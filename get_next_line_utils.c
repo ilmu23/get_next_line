@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 18:24:44 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/11/06 19:42:19 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/11/06 22:26:14 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,29 +40,6 @@ void	*ft_calloc(size_t count, size_t size)
 	return (out);
 }
 
-char	*ft_strdup(char *s)
-{
-	size_t	i;
-	size_t	asize;
-	char	*out;
-
-	if (!s)
-		return (NULL);
-	if (*s)
-		asize = ft_strlen(s) + 1;
-	else
-		asize = 1;
-	out = ft_calloc(asize, sizeof(char));
-	if (!out)
-		return (NULL);
-	if (asize == 1)
-		return (out);
-	i = 0;
-	while (i < asize - 1)
-		out[i++] = *s++;
-	return (out);
-}
-
 char	*ft_strnjoin(char *s1, char *s2, size_t n)
 {
 	size_t	i;
@@ -85,10 +62,34 @@ char	*ft_strnjoin(char *s1, char *s2, size_t n)
 		out[i++] = *s2++;
 		n--;
 	}
-	out[i] = *s2;
 	if (s1)
 		free(s1);
 	return (out);
+}
+
+char	*bufreset(char *buf, size_t start)
+{
+	size_t	i;
+	size_t	j;
+	size_t	buflen;
+	char	*out;
+
+	buflen = ft_strlen(buf);
+	if (buflen >= start)
+		out = ft_calloc(buflen - start + 1, sizeof(char));
+	else
+		out = NULL;
+	i = 0;
+	while (i < start - 1)
+		buf[i++] = '\0';
+	i++;
+	j = 0;
+	if (out)
+		while (i < buflen)
+			out[j++] = buf[i++];
+	if (out)
+		return (out);
+	return (NULL);
 }
 
 size_t	checknewline(char *buf, char **out)
@@ -96,6 +97,8 @@ size_t	checknewline(char *buf, char **out)
 	size_t	i;
 
 	i = 0;
+	if (!(*buf))
+		return (i);
 	while (i < BUFFER_SIZE)
 	{
 		if (buf[i] == '\n')
@@ -103,8 +106,10 @@ size_t	checknewline(char *buf, char **out)
 		i++;
 	}
 	if (i < BUFFER_SIZE)
-		*out = ft_strnjoin(*out, buf, i);
+		*out = ft_strnjoin(*out, buf, i + 1);
 	else
 		*out = ft_strnjoin(*out, buf, BUFFER_SIZE);
+	if (i == BUFFER_SIZE)
+		return (0);
 	return (i);
 }

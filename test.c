@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 19:08:29 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/11/06 19:15:42 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/11/06 22:08:02 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	main(int argc, char **argv)
 
 	if (argc < 2)
 		return (1);
-	if (atoi(argv[1]) == 0)
+	if (*argv[1] == '0')
 		fd = 0;
 	else
 		fd = open(argv[1], O_RDONLY);
@@ -30,6 +30,11 @@ int	main(int argc, char **argv)
 	line = get_next_line(fd);
 	while (line)
 	{
+		if (BUFFER_SIZE == 42)
+		{
+			char c = 0; 
+			read(fd, &c, 1);
+		}
 		printf("%s", line);
 		free(line);
 		line = get_next_line(fd);
