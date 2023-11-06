@@ -6,18 +6,18 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 18:24:44 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/11/06 22:26:14 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/11/07 00:26:54 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(char *s)
+size_t	ft_strclen(char *s, char c)
 {
 	size_t	i;
 
 	i = 0;
-	while (s[i])
+	while (s[i] != c && s[i])
 		i++;
 	return (i);
 }
@@ -40,76 +40,70 @@ void	*ft_calloc(size_t count, size_t size)
 	return (out);
 }
 
-char	*ft_strnjoin(char *s1, char *s2, size_t n)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	i;
-	size_t	j;
+	size_t	len1;
+	size_t	len2;
 	char	*out;
 
 	if (s1)
-		out = ft_calloc(ft_strlen(s1) + n + 1, sizeof(char));
+		len1 = ft_strclen(s1, '\0');
 	else
-		out = ft_calloc(n + 1, sizeof(char));
+		len1 = 0;
+	len2 = ft_strclen(s2, '\0');
+	out = ft_calloc(len1 + len2 + 1, sizeof(char));
 	if (!out)
 		return (NULL);
 	i = 0;
-	j = 0;
 	if (s1)
-		while (s1[j])
-			out[i++] = s1[j++];
-	while (n > 0)
-	{
+		while (*s1)
+			out[i++] = *s1++;
+	while (*s2)
 		out[i++] = *s2++;
-		n--;
-	}
-	if (s1)
-		free(s1);
 	return (out);
 }
 
-char	*bufreset(char *buf, size_t start)
-{
-	size_t	i;
-	size_t	j;
-	size_t	buflen;
-	char	*out;
-
-	buflen = ft_strlen(buf);
-	if (buflen >= start)
-		out = ft_calloc(buflen - start + 1, sizeof(char));
-	else
-		out = NULL;
-	i = 0;
-	while (i < start - 1)
-		buf[i++] = '\0';
-	i++;
-	j = 0;
-	if (out)
-		while (i < buflen)
-			out[j++] = buf[i++];
-	if (out)
-		return (out);
-	return (NULL);
-}
-
-size_t	checknewline(char *buf, char **out)
+char	*bufshift(char *dst, char *src, size_t n)
 {
 	size_t	i;
 
 	i = 0;
-	if (!(*buf))
-		return (i);
-	while (i < BUFFER_SIZE)
+	while (i < n)
 	{
-		if (buf[i] == '\n')
-			break ;
+		dst[i] = src[i];
 		i++;
 	}
-	if (i < BUFFER_SIZE)
-		*out = ft_strnjoin(*out, buf, i + 1);
-	else
-		*out = ft_strnjoin(*out, buf, BUFFER_SIZE);
-	if (i == BUFFER_SIZE)
-		return (0);
-	return (i);
+	src = dst + n;
+	while (*src)
+		*src++ = '\0';
+	return (dst);
+}
+
+void	bufcopy(char *buf, char **out)
+{
+	size_t	i;
+	size_t	linelen;
+	size_t	buflen;
+	char	*cpy;
+	char	*tmp;
+
+	buflen = ft_strclen(buf, '\0');
+	linelen = ft_strclen(buf, '\n');
+	if (linelen < buflen)
+		linelen++;
+	cpy = ft_calloc(linelen + 1, sizeof(char));
+	if (!cpy)
+		return ;
+	i = 0;
+	while (i < linelen)
+	{
+		cpy[i] = buf[i];
+		i++;
+	}
+	bufshift(buf, &buf[linelen], buflen - linelen);
+	tmp = ft_strjoin(*out, cpy);
+	free(*out);
+	free(cpy);
+	*out = tmp;
 }

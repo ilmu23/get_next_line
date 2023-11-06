@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 18:18:13 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/11/06 22:25:51 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/11/07 00:25:04 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,26 @@
 char	*get_next_line(int fd)
 {
 	static char		buf[BUFFER_SIZE + 1];
-	static size_t	i = 0;
-	static int		rv = 1;
+	size_t			reads;
+	int				rv;
 	char			*out;
 
 	out = NULL;
-	if (i < BUFFER_SIZE && i > 0)
-		out = bufreset(buf, i + 1);
-	if (!out && i > 0)
-		return (NULL);
-	while (rv > 0)
+	reads = 0;
+	rv = BUFFER_SIZE;
+	while (rv > 0 && (*buf || reads == 0))
 	{
+		if (*buf && reads > 0)
+			bufcopy(buf, &out);
+		if (out)
+			if (out[ft_strclen(out, '\0') - 1] == '\n')
+				return (out);
 		rv = read(fd, buf, BUFFER_SIZE);
 		if (rv > 0)
-			i = checknewline(buf, &out);
-		if (buf[i] == '\n')
-			return (out);
+			reads++;
 	}
-	if (i == (size_t)rv)
-		return (out);
 	if (out)
-		free(out);
+		if (ft_strclen(out, '\0') == reads)
+			return (out);
 	return (NULL);
 }
